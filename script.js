@@ -1,97 +1,151 @@
-// NAVIGATION TOP PART
-let ul = document.querySelector("ul");
-let bg = document.querySelector("nav #bg");
-bg.onclick = function(){
-	ul.style = 'display: none';
-	bg.style = 'display: none';
-}
-let button = document.querySelector("#navB").onclick = function(){
-	ul.style = 'display: flex';
-	bg.style = 'display: flex';
-}
-// BOTTOM FORM PART
-let tik = document.querySelector(".tik div svg");
-let host = 0;
-let tikB = document.querySelector(".tik div").onclick = function(){
-	if (host == 0){
-		host = 1
-		tik.style ='display: block'
-	}
-	else {
-		host = 0
-		tik.style ='display: none'
-	}
-}
-let bg2 = document.querySelector('.bg');
-let ok = document.querySelector('.wrapper button').onclick = function(){
-	bg2.style ='display: none'
-}
-let bg3 = document.querySelector('.bg2');
-let ok2 = document.querySelector('.wrapper2 button').onclick = function(){
-	bg3.style = 'display: none'
-}
-let sfx1 = document.querySelector('#sfx1');
-let sfx2 = document.querySelector('#sfx2');
-let inp1 = document.getElementById('inp1');
-let inp2 = document.getElementById('inp2');
-let inp3 = document.getElementById('inp3');
-let inp4 = document.getElementById('inp4');
-let send = document.getElementById('send').onclick = function pauseAudio(){
-	if (inp1.value == "" || inp2.value == "" || inp3.value == "" || inp4.value == "" || host == 0){
-		bg2.style ='display: flex'
-		sfx2.play()
-	}
-	else {
-		bg3.style ='display: flex'
-		inp1.value = ""
-		inp2.value = ""
-		inp3.value = ""
-		inp4.value = ""
-		host = 0
-		tik.style ='display: none'
-		sfx1.play()
-	}
-}
-//GSAP AND SCROOL-TRIGGER ANIMATION
-gsap.to('ul li',{
-	y: 0,
-	duration: 1,
-	opacity: 1,
-	stagger: 0.5,
+  // Mouse scroll gsap animation
+gsap.to('.mouse', {
+  opacity: 0,
+  scrollTrigger: {
+    scroller: 'body',
+    trigger: '.mouse',
+    start: 'top 85%',
+    end: 'top 100%',
+    scrub: '1'
+  }
 })
-gsap.to('nav',{
-	background: 'hsla(235, 0%, 0%, 0.2)',
-	backdropFilter: "blur(2px)",
-	scrollTrigger: {
-		trigger: '#section1',
-		scroller: 'body',
-		start: 'top 0%',
-		end: 'bottom 90%',
-		scrub: 1,
-	}
-})
-// CUSTOM CURSOR PART
-var page1 = document.querySelector('body');
-var cursor = document.querySelector('#cursor');
 
-page1.addEventListener('mouseenter', function() {
-	gsap.to('#cursor', {
-		scale: 1,
-		opacity: 1,
-		duration: 0.3,
-	})
+  // Side navigation functionality
+let body = document.querySelector('body')
+let menu = document.querySelector('#menu')
+let nav = document.querySelector('#horizontal')
+let close = document.querySelector('#close')
+let bg = document.querySelector('#bg')
+
+menu.onclick = function(){
+  nav.style = 'right: 0';
+  gsap.from('nav ul #horizontal li',{
+    x: 40,
+    stagger: 0.1,
+    opacity: 0,
+  })
+  bg.style ='opacity: 0.5; pointer-events: visible'
+  body.classList.add('disableScroll')
+}
+close.onclick = function() {
+  nav.style = 'right: -100%'
+  bg.style ='opacity: 0; pointer-events: none'
+  body.classList.remove('disableScroll')
+}
+bg.onclick = function() {
+  nav.style = 'right: -100%'
+  bg.style = 'opacity: 0; pointer-events: none'
+  body.classList.remove('disableScroll')
+}
+
+  // Top nav appear and disappear in scrolling bases
+  
+let navTop = document.querySelector('nav');
+let lastScrollTop = 0;
+
+window.addEventListener('scroll', function() {
+  let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+  if (scrollTop > lastScrollTop) {
+    // Scrolling down
+    navTop.classList.add('hidden');
+  } else {
+    // Scrolling up
+    navTop.classList.remove('hidden');
+  }
+
+  lastScrollTop = scrollTop;
+});
+
+gsap.to('nav', {
+  background: 'hsla(235, 0%, 0%, 0.5)',
+  paddingTop: '0.5vw',
+  paddingBottom: '0.5vw',
+  scrollTrigger: {
+    scroller: 'body',
+    trigger: 'nav',
+    start: 'bottom 5%',
+    markers: false,
+    scrub: 0,
+  }
 })
-page1.addEventListener('mouseleave', function() {
-	gsap.to('#cursor', {
-		scale: 0,
-		opacity: 0,
-		duration: 0.3,
-	})
-})
-page1.addEventListener('mousemove', function(dets) {
-	gsap.to('#cursor', {
-		left: dets.x - 14,
-		top: dets.y -4,
-		duration: 0.05,
-	})
-})
+
+  // Form validation functionality
+
+let checkBox = document.querySelector('#check')
+let check = document.querySelector('#check svg')
+let host = false
+
+checkBox.onclick = function(){
+  if (host == false) {
+    host = true
+    check.style = 'display: block'
+  }
+  else {
+    host = false
+    check.style = 'display: none'
+  }
+}
+
+
+const submit = document.querySelector('#submit')
+const name = document.querySelector('#name')
+const email = document.querySelector('#email')
+const message = document.querySelector('textarea')
+
+submit.onclick = function(){
+    // Name validation
+  if (name.value == '') {
+    name.classList.add('wrong')
+    name.addEventListener('keydown', function(){
+      if (name.value.length > 0) {
+        name.classList.remove('wrong')
+      }
+      else {
+        email.classList.add('wrong')
+      }
+    })
+  }else{
+    name.classList.remove('wrong')
+  }
+  
+    // Email validation
+  let mailInclude = email.value.includes('@')
+  
+  if (email.value == '' || mailInclude == false) {
+    email.classList.add('wrong')
+    email.addEventListener('keydown', function() {
+      if (email.value.length > 0 && email.value.includes('@')) {
+        email.classList.remove('wrong')
+      }
+      else{
+        email.classList.add('wrong')
+      }
+    })
+  } else {
+    email.classList.remove('wrong')
+  }
+  
+    // Message validation
+  if (message.value == '') {
+    message.classList.add('wrong')
+    message.addEventListener('keydown', function() {
+      if (message.value.length > 0) {
+        message.classList.remove('wrong')
+      }
+      else {
+        email.classList.add('wrong')
+      }
+    })
+  } else {
+    message.classList.remove('wrong')
+  }
+  
+    // CheckBox validation
+  if (host == false) {
+    checkBox.classList.add('wrongCheck')
+  }
+  else{
+    checkBox.classList.remove('wrongCheck')
+  }
+}
